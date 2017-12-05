@@ -586,3 +586,153 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 968, in _find_and_load
   File "<frozen importlib._bootstrap>", line 955, in _find_and_load_unlocked
 ImportError: No module named 'cogs.owner'
+[04/12/2017 01:11] ERROR red load_cogs 573: name 'NUM_ENC' is not defined
+Traceback (most recent call last):
+  File "C:\Users\Michael\git\GimmieYourMonieBot\red.py", line 570, in load_cogs
+    owner_cog._load_cog(extension)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 946, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "C:\Users\Michael\AppData\Local\Programs\Python\Python35\lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 985, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 968, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 957, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 697, in exec_module
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 45, in <module>
+    class SMReel(Enum):
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 48, in SMReel
+    two       = "\N{DIGIT TWO}" + NUM_ENC
+NameError: name 'NUM_ENC' is not defined
+[04/12/2017 01:42] ERROR red on_command_error 369: Exception in command 'reload'
+Traceback (most recent call last):
+  File "lib\discord\ext\commands\core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 150, in _reload
+    self._load_cog(module)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 946, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "C:\Users\Michael\AppData\Local\Programs\Python\Python35\lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 985, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 968, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 957, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 697, in exec_module
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 59, in <module>
+    (SMReel.six, SMReel.six, SMReel.six) : {
+  File "C:\Users\Michael\AppData\Local\Programs\Python\Python35\lib\enum.py", line 274, in __getattr__
+    raise AttributeError(name) from None
+AttributeError: six
+[04/12/2017 01:43] ERROR red on_command_error 369: Exception in command 'reload'
+Traceback (most recent call last):
+  File "lib\discord\ext\commands\core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 150, in _reload
+    self._load_cog(module)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 946, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "C:\Users\Michael\AppData\Local\Programs\Python\Python35\lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 985, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 968, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 957, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 697, in exec_module
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 266, in <module>
+    class Slots:
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 281, in Slots
+    @_bank.command(pass_context=True, no_pm=True)
+NameError: name '_bank' is not defined
+[04/12/2017 01:43] ERROR red on_command_error 369: Exception in command 'reload'
+Traceback (most recent call last):
+  File "lib\discord\ext\commands\core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 150, in _reload
+    self._load_cog(module)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 946, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "C:\Users\Michael\AppData\Local\Programs\Python\Python35\lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 985, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 968, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 957, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 697, in exec_module
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 266, in <module>
+    class Slots:
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 281, in Slots
+    @_bank.command(pass_context=True, no_pm=True)
+NameError: name '_bank' is not defined
+[04/12/2017 01:45] ERROR red on_command_error 369: Exception in command 'reload'
+Traceback (most recent call last):
+  File "lib\discord\ext\commands\core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 150, in _reload
+    self._load_cog(module)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 946, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "C:\Users\Michael\AppData\Local\Programs\Python\Python35\lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 985, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 968, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 957, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 697, in exec_module
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 266, in <module>
+    class Slots:
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 325, in Slots
+    async def balance(self, ctx, user: discord.Member=None):
+  File "lib\discord\ext\commands\core.py", line 574, in decorator
+    self.add_command(result)
+  File "lib\discord\ext\commands\core.py", line 487, in add_command
+    raise discord.ClientException('Command {0.name} is already registered.'.format(command))
+discord.errors.ClientException: Command balance is already registered.
+[04/12/2017 01:46] ERROR red on_command_error 369: Exception in command 'reload'
+Traceback (most recent call last):
+  File "lib\discord\ext\commands\core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 150, in _reload
+    self._load_cog(module)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 946, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "C:\Users\Michael\AppData\Local\Programs\Python\Python35\lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 985, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 968, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 957, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 697, in exec_module
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 266, in <module>
+    class Slots:
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 557, in Slots
+    @slotsset.command(pass_context=True)
+NameError: name 'slotsset' is not defined
+[04/12/2017 01:48] ERROR red on_command_error 369: Exception in command 'reload'
+Traceback (most recent call last):
+  File "lib\discord\ext\commands\core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 150, in _reload
+    self._load_cog(module)
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\owner.py", line 946, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "C:\Users\Michael\AppData\Local\Programs\Python\Python35\lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 985, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 968, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 957, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 697, in exec_module
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 266, in <module>
+    class Slots:
+  File "C:\Users\Michael\git\GimmieYourMonieBot\cogs\slots.py", line 571, in Slots
+    @slotsset.command(pass_context=True)
+NameError: name 'slotsset' is not defined
+[04/12/2017 01:49] INFO slots _set 372: Neckup(188148428201525249) set 9999999 credits to Neckup (188148428201525249)
