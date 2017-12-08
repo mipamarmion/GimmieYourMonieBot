@@ -8,16 +8,20 @@ from .utils import checks
 from cogs.utils.chat_formatting import pagify, box
 from enum import Enum
 from __main__ import send_cmd_help
+from random import shuffle
 import os
 import time
 import logging
 import random
 
+
 default_settings = {"SLOT_MIN": 1, "SLOT_MAX": 1000000, "SLOT_TIME": 0,
                     "REGISTER_CREDITS": 100}
 
+
 class SlotError(Exception):
     pass
+
 
 class BankError(Exception):
     pass
@@ -38,62 +42,83 @@ class InsufficientBalance(BankError):
 class NegativeValue(BankError):
     pass
 
+
 class SameSenderAndReceiver(BankError):
     pass
 
+
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
 
+
 class SMReel(Enum):
+    wild      = "\N{GAME DIE}"
     cherries  = "\N{CHERRIES}"
-    cookie    = "\N{COOKIE}"
-    two       = "\N{DIGIT TWO}" + NUM_ENC
+    medal     = "\N{SPORTS MEDAL}"
     flc       = "\N{FOUR LEAF CLOVER}"
-    cyclone   = "\N{CYCLONE}"
-    sunflower = "\N{SUNFLOWER}"
-    seven     = "\N{DIGIT SEVEN}" + NUM_ENC
-    mushroom  = "\N{MUSHROOM}"
+    dollar    = "\N{BANKNOTE WITH DOLLAR SIGN}"
+    bell      = "\N{BELL}"
+    moneystack= "\N{MONEY WITH WINGS}"
     heart     = "\N{HEAVY BLACK HEART}"
-    snowflake = "\N{SNOWFLAKE}"
+    spade     = "\N{BLACK SPADE SUIT}"
+    gem       = "\N{GEM STONE}"
+    moneybag  = "\N{MONEY BAG}"
+    seven     = "\N{DIGIT SEVEN}" + NUM_ENC
 
-PAYOUTS = {
-    (SMReel.seven, SMReel.seven, SMReel.seven) : {
-        "payout" : lambda x: x * 2500 + x,
-        "phrase" : "JACKPOT! 777! Your bid has been multiplied * 2500!"
-    },
-    (SMReel.flc, SMReel.flc, SMReel.flc) : {
-        "payout" : lambda x: x + 1000,
-        "phrase" : "4LC! +1000!"
-    },
-    (SMReel.cherries, SMReel.cherries, SMReel.cherries) : {
-        "payout" : lambda x: x + 800,
-        "phrase" : "Three cherries! +800!"
-    },
-    (SMReel.two, SMReel.seven) : {
-        "payout" : lambda x: x * 4 + x,
-        "phrase" : "2 7! Your bid has been multiplied * 4!"
-    },
-    (SMReel.cherries, SMReel.cherries) : {
-        "payout" : lambda x: x * 3 + x,
-        "phrase" : "Two cherries! Your bid has been multiplied * 3!"
-    },
-    "3 symbols" : {
-        "payout" : lambda x: x + 500,
-        "phrase" : "Three symbols! +500!"
-    },
-    "2 symbols" : {
-        "payout" : lambda x: x * 2 + x,
-        "phrase" : "Two consecutive symbols! Your bid has been multiplied * 2!"
-    },
-}
+SM_REEL_MULTIPLIERS = {
+    SMReel.cherries: [0, 0, 2, 5, 10, 100],
+    SMReel.medal: [0, 0, 0, 5, 10, 100],
+    SMReel.flc: [0, 0, 0, 5, 20, 100],
+    SMReel.dollar: [0, 0, 0, 5, 20, 100],
+    SMReel.bell: [0, 0, 0, 10, 50, 100],
+    SMReel.moneystack: [0, 0, 0, 10, 50, 100],
+    SMReel.heart: [0, 0, 0, 20, 80, 120],
+    SMReel.spade: [0, 0, 0, 20, 80, 120],
+    SMReel.gem: [0, 0, 0, 50, 100, 150],
+    SMReel.moneybag: [0, 0, 0, 50, 100, 150],
+    SMReel.seven: [0, 0, 10, 50, 100, 300]}
 
-SLOT_PAYOUTS_MSG = ("Slot machine payouts:\n"
-                    "{seven.value} {seven.value} {seven.value} Bet * 2500\n"
-                    "{flc.value} {flc.value} {flc.value} +1000\n"
-                    "{cherries.value} {cherries.value} {cherries.value} +800\n"
-                    "{two.value} {seven.value} Bet * 4\n"
-                    "{cherries.value} {cherries.value} Bet * 3\n\n"
-                    "Three symbols: +500\n"
-                    "Two symbols: Bet * 2".format(**SMReel.__dict__))
+class Payout:
+    def getSymbolCount(in_line, i):
+        count = list([1, SMReel.wild])
+        line = list(in_line)
+
+        if line[i] == SMReel.wild:
+            for j in range(i, len(line) - 1):
+                if line[j] != SMReel.wild:
+                    line[i] = line[j]
+
+        count[1] = line[i]
+
+        for j in range(i, len(line) - 1):
+            if (line[j] == line[j+1]) or (line[j+1] == SMReel.wild):
+                line[j + 1] = line[j]
+                count[0] += 1
+            else:
+                return count;
+        return count
+
+    def getMultiplierPayout(symbol, count, bet):
+        return [SM_REEL_MULTIPLIERS[symbol][count] * bet, symbol, count]
+
+    def getLinePayout(line, bet):
+        payout = []
+        skip = -1
+        for i, symbol in enumerate(line):
+            if skip > i or i == 4:
+                continue
+            count = Payout.getSymbolCount(line, i)
+
+            if count[0] == 2 and (count[1] == SMReel.seven or count[1] == SMReel.cherries):
+                payout.append(Payout.getMultiplierPayout(count[1], 2, bet))
+            elif count[0] > 2:
+                payout.append(Payout.getMultiplierPayout(count[1], count[0], bet))
+            if line[i + count[0] - 1] == SMReel.wild:
+                skip = i + count[0] - 1
+            else :
+                skip = i + count[0]
+        return payout
+
+
 
 class SetParser:
     def __init__(self, argument):
@@ -115,6 +140,7 @@ class SetParser:
             self.operation = "set"
         else:
             raise
+
 
 class Bank:
 
@@ -262,6 +288,7 @@ class Bank:
             return deepcopy(self.accounts[server.id][user.id])
         except KeyError:
             raise NoAccount()
+
 
 class Slots:
     """Slots
@@ -471,7 +498,14 @@ class Slots:
         await self.bot.whisper(SLOT_PAYOUTS_MSG)
 
     @commands.command(pass_context=True, no_pm=True)
+    async def multislot(self, ctx, bid:int):
+        await self.playslot(ctx, bid * 3, 1)
+
+    @commands.command(pass_context=True, no_pm=True)
     async def slot(self, ctx, bid: int):
+        await self.playslot(ctx, bid, 0)
+
+    async def playslot(self, ctx, bid: int, multislotbool):
         """Play the slot machine"""
         author = ctx.message.author
         server = author.server
@@ -488,7 +522,7 @@ class Slots:
                 raise InvalidBid()
             if not self.bank.can_spend(author, bid):
                 raise InsufficientBalance
-            await self.slot_machine(author, bid)
+            await self.slot_machine(author, bid, multislotbool)
         except NoAccount:
             await self.bot.say("{} You need an account to use the slot "
                                "machine. Type `{}bank register` to open one."
@@ -504,55 +538,66 @@ class Slots:
                                "".format(settings["SLOT_MIN"],
                                          settings["SLOT_MAX"]))
 
-    async def slot_machine(self, author, bid):
+    async def slot_machine(self, author, bid, multislot):
         default_reel = deque(SMReel)
         reels = []
         self.slot_register[author.id] = datetime.utcnow()
-        for i in range(3):
+        for i in range(5):
+            default_reel = deque(SMReel)
+            if i < 1 or i > 3:
+                default_reel.remove(SMReel.wild)
+
+            shuffle(default_reel)
             default_reel.rotate(random.randint(-999, 999)) # weeeeee
-            new_reel = deque(default_reel, maxlen=3) # we need only 3 symbols
+            new_reel = deque(default_reel, maxlen=5) # we need only 5 symbols
             reels.append(new_reel)                   # for each reel
-        rows = ((reels[0][0], reels[1][0], reels[2][0]),
-                (reels[0][1], reels[1][1], reels[2][1]),
-                (reels[0][2], reels[1][2], reels[2][2]))
+        rows = ((reels[0][0], reels[1][0], reels[2][0], reels[3][0], reels[4][0]),
+                (reels[0][1], reels[1][1], reels[2][1], reels[3][1], reels[4][1]),
+                (reels[0][2], reels[1][2], reels[2][2], reels[3][2], reels[4][2]))
 
-        slot = "~~\n~~" # Mobile friendly
+        slot = "WALCUM TO THE SLOTS\n"
         for i, row in enumerate(rows): # Let's build the slot to show
-            sign = "  "
-            if i == 1:
+            sign = "||"
+            signi = "||"
+            if multislot:
                 sign = ">"
-            slot += "{}{} {} {}\n".format(sign, *[c.value for c in row])
+                signi = "<"
+            elif i == 1:
+                sign = ">"
+                signi = "<"
 
-        payout = PAYOUTS.get(rows[1])
-        if not payout:
-            # Checks for two-consecutive-symbols special rewards
-            payout = PAYOUTS.get((rows[1][0], rows[1][1]),
-                     PAYOUTS.get((rows[1][1], rows[1][2]))
-                                )
-        if not payout:
-            # Still nothing. Let's check for 3 generic same symbols
-            # or 2 consecutive symbols
-            has_three = rows[1][0] == rows[1][1] == rows[1][2]
-            has_two = (rows[1][0] == rows[1][1]) or (rows[1][1] == rows[1][2])
-            if has_three:
-                payout = PAYOUTS["3 symbols"]
-            elif has_two:
-                payout = PAYOUTS["2 symbols"]
+            slot += "{}{} {} {} {} {}{}\n".format(sign, *[c.value for c in row], signi)
 
-        if payout:
+        if multislot:
+            payout = list(Payout.getLinePayout(rows[0], int(bid/3)))
+            payout.extend(Payout.getLinePayout(rows[1], int(bid/3)))
+            payout.extend(Payout.getLinePayout(rows[2], int(bid/3)))
+        else:
+            payout = Payout.getLinePayout(rows[1], bid)
+
+        if payout != []:
             then = self.bank.get_balance(author)
-            pay = payout["payout"](bid)
+            pay = 0
+            for win in payout:
+                pay += win[0]
             now = then - bid + pay
             self.bank.set_credits(author, now)
-            await self.bot.say("{}\n{} {}\n\nYour bid: {}\n{} → {}!"
-                               "".format(slot, author.mention,
-                                         payout["phrase"], bid, then, now))
+            await self.bot.say("{}\n{} \n{}\nYour total win: {}\nYour bid: {}\n{} → {}!"
+                               "".format(slot, Slots.getpayoutsymbols(payout), author.mention, pay, bid, then, now))
         else:
             then = self.bank.get_balance(author)
             self.bank.withdraw_credits(author, bid)
             now = then - bid
             await self.bot.say("{}\n{} Nothing!\nYour bid: {}\n{} → {}!"
                                "".format(slot, author.mention, bid, then, now))
+
+    def getpayoutsymbols(payout):
+        out = ""
+        for i, win in enumerate(payout):
+            for j in range(win[2]):
+                out += win[1].value
+            out += " = multiplier of " + str(SM_REEL_MULTIPLIERS[win[1]][win[2]]) + "\n"
+        return out
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_server=True)
@@ -591,6 +636,7 @@ class Slots:
         self.settings[server.id]["SLOT_TIME"] = seconds
         await self.bot.say("Cooldown is now {} seconds.".format(seconds))
         dataIO.save_json(self.file_path, self.settings)
+
 
 def check_folders():
     if not os.path.exists("data/slots"):
