@@ -5,3 +5,8 @@ data
 *.exe
 *.dll
 lib
+venv1
+venv
+.idea
+.floo
+.flooignore
