@@ -100,6 +100,16 @@ class Payout:
     def getMultiplierPayout(symbol, count, bet):
         return [SM_REEL_MULTIPLIERS[symbol][count] * bet, symbol, count]
 
+    def getSkipCount(i, count, line):
+        linePos = i + count - 1
+        skip = 0
+
+        while line[linePos] == SMReel.wild:
+            skip += 1
+            linePos -= 1
+
+        return i + (count - skip)
+
     def getLinePayout(line, bet):
         payout = []
         skip = -1
@@ -113,8 +123,8 @@ class Payout:
             elif count[0] > 2:
                 payout.append(Payout.getMultiplierPayout(count[1], count[0], bet))
             if line[i + count[0] - 1] == SMReel.wild:
-                skip = i + count[0] - 1
-            else :
+                skip = Payout.getSkipCount(i, count[0], line)
+            else:
                 skip = i + count[0]
         return payout
 
